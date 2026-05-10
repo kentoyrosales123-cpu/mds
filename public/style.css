@@ -1779,23 +1779,23 @@ footer h3 {
 
 .ai-message {
   max-width: 85%;
-  padding: 13px 15px;
-  border-radius: 18px;
-  font-size: 14px;
-  line-height: 1.6;
-  animation: fadeChat 0.3s ease;
+  padding: 12px 14px;
+  margin: 10px 0;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .ai-message.bot {
-  align-self: flex-start;
+  margin-right: auto;
   background: rgba(255, 255, 255, 0.08);
-  color: #dce4ff;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .ai-message.user {
-  align-self: flex-end;
-  background: linear-gradient(135deg, #006eff, #9d4dff);
+  margin-left: auto;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
   color: white;
 }
 

@@ -146,151 +146,132 @@ if (contactForm) {
 const aiChatButton = document.getElementById("aiChatButton");
 const aiChatWindow = document.getElementById("aiChatWindow");
 const aiCloseBtn = document.getElementById("aiCloseBtn");
-const aiChatMessages = document.getElementById("aiChatMessages");
 const aiChatForm = document.getElementById("aiChatForm");
 const aiChatInput = document.getElementById("aiChatInput");
+const aiChatMessages = document.getElementById("aiChatMessages");
 
-let aiOpenedOnce = false;
+aiChatButton.onclick = () => {
+  aiChatWindow.classList.toggle("active");
+};
 
-const faqAnswers = [
+aiCloseBtn.onclick = () => {
+  aiChatWindow.classList.remove("active");
+};
+
+const replies = [
   {
-    keywords: ["price", "pricing", "package", "packages", "cost", "how much"],
+    keywords: ["price", "pricing", "cost", "rate", "how much", "package"],
     answer:
-      "Our website packages start at ₱3,000+ for a starter landing page and ₱8,000+ for business websites. Custom SaaS platforms and systems are priced based on features.",
+      "Our pricing starts at ₱3,000+ for starter websites, ₱8,000+ for business websites, and custom pricing for SaaS platforms, dashboards, automation, and business systems.",
   },
   {
-    keywords: ["custom system", "custom systems", "premium system", "saas"],
+    keywords: [
+      "website",
+      "landing page",
+      "web development",
+      "business website",
+    ],
     answer:
-      "Yes, we build custom systems such as SaaS platforms, dashboards, booking systems, financial trackers, business tools, and automation platforms.",
+      "Yes, we build modern, responsive, and premium websites for businesses, portfolios, landing pages, booking systems, and online services.",
   },
   {
-    keywords: ["services", "offer", "do you do", "what do you offer"],
+    keywords: [
+      "business management",
+      "bms",
+      "inventory",
+      "sales",
+      "expenses",
+      "customers",
+      "employees",
+    ],
     answer:
-      "We offer Website Development, SaaS Platforms, Business Systems, UI/UX Design, AI Automation, and Responsive Web Applications.",
+      "Our Business Management System helps manage inventory, sales, expenses, customers, employees, reports, and business performance in one dashboard.",
   },
   {
-    keywords: ["admin", "dashboard", "dashboards"],
+    keywords: ["ai", "automation", "chatbot", "agent"],
     answer:
-      "Yes, we create admin dashboards for managing bookings, users, payments, reports, analytics, inventory, and business operations.",
+      "We create AI automation tools such as smart chatbots, FAQ assistants, booking assistants, business workflow automation, and AI-powered dashboards.",
   },
   {
-    keywords: ["ai", "automation", "chatbot"],
+    keywords: ["booking", "reservation", "rental", "camera"],
     answer:
-      "Yes, we create AI automation such as FAQ chatbots, booking assistants, automated emails, workflow automation, and smart business tools.",
+      "Yes, we build booking and reservation systems with admin dashboards, customer records, payment tracking, availability control, and confirmation features.",
   },
   {
-    keywords: ["how long", "timeline", "duration", "development take"],
+    keywords: ["rsvp", "wedding", "invitation"],
     answer:
-      "A landing page usually takes 3–7 days. A business website may take 1–3 weeks. Custom systems depend on complexity and required features.",
+      "We offer elegant Wedding RSVP websites with guest confirmation forms, countdown timers, event details, location sections, and premium romantic designs.",
   },
   {
-    keywords: ["responsive", "mobile", "tablet"],
+    keywords: ["time", "timeline", "how long", "duration"],
     answer:
-      "Yes, all websites and systems we build are fully responsive for desktop, tablet, and mobile devices.",
+      "A simple website can usually be completed faster, while full systems like dashboards, SaaS platforms, and booking systems depend on the number of features required.",
   },
   {
-    keywords: ["redesign", "existing website", "revamp"],
+    keywords: ["contact", "message", "email", "hire", "start project"],
     answer:
-      "Yes, we can redesign existing websites and improve their UI, responsiveness, speed, layout, and overall premium look.",
-  },
-  {
-    keywords: ["payment", "gcash", "bank", "method"],
-    answer:
-      "We accept common payment methods such as GCash and bank transfer. Payment terms can be discussed before starting the project.",
-  },
-  {
-    keywords: ["downpayment", "deposit", "advance"],
-    answer:
-      "Yes, we usually require a downpayment before starting the project, then the remaining balance after completion or before final deployment.",
-  },
-  {
-    keywords: ["contact", "message", "reach", "email"],
-    answer:
-      "You can contact us through the contact form on this website or message us through our official Facebook page.",
-  },
-  {
-    keywords: ["location", "where", "based"],
-    answer:
-      "M Digital Solution can work with clients online. We can discuss your project remotely through chat, email, or online meetings.",
+      "You can start by sending your project details through the contact form on this website. Tell us what system or website you need, and we’ll guide you from there.",
   },
 ];
 
-function getCurrentTime() {
-  return new Date().toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function addAiMessage(text, sender = "bot") {
+function addMessage(text, sender) {
   const message = document.createElement("div");
   message.className = `ai-message ${sender}`;
-  message.innerHTML = `
-    ${text}
-    <span class="ai-time">${getCurrentTime()}</span>
-  `;
+  message.textContent = text;
   aiChatMessages.appendChild(message);
   aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
 }
 
-function showTypingIndicator() {
-  const typing = document.createElement("div");
-  typing.className = "ai-message bot";
-  typing.id = "typingIndicator";
-  typing.innerHTML = `
-    <div class="typing-dots">
-      <span></span><span></span><span></span>
-    </div>
-  `;
-  aiChatMessages.appendChild(typing);
-  aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
-}
+function getSmartReply(userMessage) {
+  const message = userMessage.toLowerCase();
 
-function removeTypingIndicator() {
-  const typing = document.getElementById("typingIndicator");
-  if (typing) typing.remove();
-}
+  let bestMatch = null;
+  let bestScore = 0;
 
-function getAiReply(question) {
-  const lowerQuestion = question.toLowerCase();
+  replies.forEach((item) => {
+    let score = 0;
 
-  const match = faqAnswers.find((faq) =>
-    faq.keywords.some((keyword) => lowerQuestion.includes(keyword)),
-  );
+    item.keywords.forEach((keyword) => {
+      if (message.includes(keyword)) {
+        score++;
+      }
+    });
 
-  if (match) return match.answer;
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = item;
+    }
+  });
 
-  return "Please contact us directly for more details. You can use the contact form and we’ll get back to you as soon as possible.";
-}
-
-aiChatButton.addEventListener("click", () => {
-  aiChatWindow.classList.add("active");
-
-  if (!aiOpenedOnce) {
-    addAiMessage(
-      "Hi! I'm the M Digital Solution AI Assistant. How can I help you today?",
-    );
-    aiOpenedOnce = true;
+  if (bestMatch) {
+    return bestMatch.answer;
   }
-});
 
-aiCloseBtn.addEventListener("click", () => {
-  aiChatWindow.classList.remove("active");
-});
+  return "I can help you with websites, business systems, SaaS platforms, AI automation, booking systems, pricing, and project inquiries. What would you like to build?";
+}
 
 aiChatForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const userQuestion = aiChatInput.value.trim();
-  if (!userQuestion) return;
+  const userMessage = aiChatInput.value.trim();
+  if (!userMessage) return;
 
-  addAiMessage(userQuestion, "user");
+  addMessage(userMessage, "user");
   aiChatInput.value = "";
 
-  showTypingIndicator();
+  addMessage("Typing...", "bot");
 
   setTimeout(() => {
-    removeTypingIndicator();
-    addAiMessage(getAiReply(userQuestion), "bot");
-  }, 900);
+    const typingMessage = aiChatMessages.lastChild;
+    typingMessage.textContent = getSmartReply(userMessage);
+  }, 600);
+});
+
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    addMessage(
+      "Hi! I’m M Digital AI. I can help you with pricing, websites, business systems, AI automation, booking systems, and project inquiries.",
+      "bot",
+    );
+  }, 800);
 });
